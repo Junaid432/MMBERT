@@ -73,13 +73,13 @@ def load_mlm_data(args):
     # test_image_names = os.listdir(os.path.join(test_path,'images'))
 
     train_data = pd.read_csv(os.path.join(train_path,'traindata.csv'))
-    train_data = train_data[train_data['name'].isin(train_image_names)]
+    train_data = train_data[train_data['img_id'].isin(train_image_names)]
 
     val_data = pd.read_csv(os.path.join(val_path, 'valdata.csv'))
-    val_data = val_data[val_data['name'].isin(val_image_names)]
+    val_data = val_data[val_data['img_id'].isin(val_image_names)]
 
     # test_data = pd.read_csv(os.path.join(test_path, 'testdata.csv'))
-    # test_data = test_data[test_data['name'].isin(test_image_names)]
+    # test_data = test_data[test_data['img_id'].isin(test_image_names)]
     
 
     train_data = train_data.sample(frac = args.train_pct)
