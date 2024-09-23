@@ -64,22 +64,35 @@ def get_keywords(args):
 
 
 def load_mlm_data(args):
-    train_path = os.path.join(args.data_dir,'train','radiology')
-    val_path = os.path.join(args.data_dir,'validation','radiology')
-    test_path = os.path.join(args.data_dir,'test','radiology')
+    # Use the correct train and validation paths directly
+    train_path = '/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Training/Train_images'
+    val_path = '/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Validation/Val_images'
 
-    train_image_names = os.listdir(os.path.join(train_path,'images'))
-    val_image_names = os.listdir(os.path.join(val_path,'images'))
-    # test_image_names = os.listdir(os.path.join(test_path,'images'))
+    # Load the image file names without appending 'images'
+    train_image_names = os.listdir(train_path)  # No need for 'images' subfolder
+    val_image_names = os.listdir(val_path)      # No need for 'images' subfolder
 
-    train_data = pd.read_csv(os.path.join(train_path,'traindata.csv'))
-    train_data = train_data[train_data['name'].isin(train_image_names)]
+    # Load the rest of the data as needed
+    # Proceed with loading the data as before
 
-    val_data = pd.read_csv(os.path.join(val_path, 'valdata.csv'))
-    val_data = val_data[val_data['name'].isin(val_image_names)]
+
+    # train_path = os.path.join(args.data_dir,'train','radiology')
+    # val_path = os.path.join(args.data_dir,'validation','radiology')
+    # test_path = os.path.join(args.data_dir,'test','radiology')
+
+    # train_image_names = os.listdir(os.path.join(train_path,'images'))
+    # val_image_names = os.listdir(os.path.join(val_path,'images'))
+    # # test_image_names = os.listdir(os.path.join(test_path,'images'))
+
+    train_data = pd.read_csv('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Training/traindf.csv')
+
+    train_data = train_data[train_data['img_id'].isin(train_image_names)]
+
+    val_data = pd.read_csv('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Validation/valdf.csv')
+    val_data = val_data[val_data['img_id'].isin(val_image_names)]
 
     # test_data = pd.read_csv(os.path.join(test_path, 'testdata.csv'))
-    # test_data = test_data[test_data['name'].isin(test_image_names)]
+    # test_data = test_data[test_data['img_id'].isin(test_image_names)]
     
 
     train_data = train_data.sample(frac = args.train_pct)
