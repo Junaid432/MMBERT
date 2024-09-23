@@ -18,7 +18,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Pretrain on ROCO with MLM")
 
     parser.add_argument('-r', '--run_name', type=str, help="name for wandb run", required=True)
-    parser.add_argument('--data_dir', type=str, default='/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019', help='path to dataset', required=False)
+    parser.add_argument('--data_dir', type=str, default='/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Training/Train_images', help='path to dataset', required=False)
     parser.add_argument('--save_dir', type=str, default='/home/viraj.bagal/viraj/medvqa/Weights/roco_mlm', help='save model weights in this dir', required=False)
     parser.add_argument('--mlm_prob', type=float, required=True, help='probability of token being masked')
     parser.add_argument('--mixed_precision', action='store_true', required=False, default=False, help='mixed precision training or not')
@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     train_data, val_data = load_mlm_data(args)
     # Exclude image if needed
-    train_data = train_data[train_data['name'] != 'PMC4240561_MA-68-291-g002.jpg'].reset_index(drop=True)
+    #train_data = train_data[train_data['img_id'] != 'PMC4240561_MA-68-291-g002.jpg'].reset_index(drop=True)
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -84,7 +84,9 @@ if __name__ == '__main__':
     # Create datasets and loaders
     traindataset = ROCO(args, train_data, train_tfm, keywords, mode='train')
     valdataset = ROCO(args, val_data, val_tfm, keywords, mode='validation')
+    print(f"Number of samples in the training dataset: {len(traindataset)}")
 
+    
     trainloader = DataLoader(traindataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
     valloader = DataLoader(valdataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
 
