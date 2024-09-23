@@ -45,7 +45,7 @@ def get_permutation(n):
 
 
 def get_keywords(args):
-    with open(os.path.join(args.data_dir, 'vocab', 'med_vocab.pkl'), 'rb') as f:
+    with open('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/vocab/med_vocab.pkl', 'rb') as f:
         key = pickle.load(f)
 
     keywords = []
@@ -62,20 +62,73 @@ def get_keywords(args):
 
     return keywords
 
+import pandas as pd
+import os
+
+# Load your datasets
+train_data = pd.read_csv('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Training/traindf.csv')
+val_data = pd.read_csv('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Validation/valdf.csv')
+
+# Assuming you have loaded the image names into lists
+train_image_names = os.listdir('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Training/Train_images/')
+val_image_names = os.listdir('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Validation/Val_images/')
+
+# Debugging: Check first few entries of image names
+print("First few train images:", train_image_names[:5])
+print("First few validation images:", val_image_names[:5])
+
+# Strip whitespace and add file extensions
+train_data['img_id'] = train_data['img_id'].str.strip() + '.jpg'  # Adjust extension if needed
+val_data['img_id'] = val_data['img_id'].str.strip() + '.jpg'
+
+# Debugging: Check first few rows of img_id after adding extension
+print("First few train img_ids:", train_data['img_id'].head())
+print("First few validation img_ids:", val_data['img_id'].head())
+
+# Filter the DataFrames based on image names
+train_data = train_data[train_data['img_id'].isin(train_image_names)]
+val_data = val_data[val_data['img_id'].isin(val_image_names)]
+
+# Debugging: Check the shapes after filtering
+print("Filtered train data shape:", train_data.shape)
+print("Filtered validation data shape:", val_data.shape)
+
+
 
 def load_mlm_data(args):
-    train_path = os.path.join(args.data_dir,'train','radiology')
-    val_path = os.path.join(args.data_dir,'validation','radiology')
-    test_path = os.path.join(args.data_dir,'test','radiology')
 
-    train_image_names = os.listdir(os.path.join(train_path,'images'))
-    val_image_names = os.listdir(os.path.join(val_path,'images'))
-    # test_image_names = os.listdir(os.path.join(test_path,'images'))
+    train_data = pd.read_csv('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Training/traindf.csv')
 
-    train_data = pd.read_csv(os.path.join(train_path,'traindata.csv'))
+    # Use the correct train and validation paths directly
+    train_path = '/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Training/Train_images/'
+    val_path = '/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Validation/Val_images/'
+
+    # Load the image file names without appending 'images'
+    train_image_names = os.listdir(train_path)  # No need for 'images' subfolder
+    val_image_names = os.listdir(val_path)      # No need for 'images' subfolder
+    train_image_names = os.listdir('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Training/Train_images')
+    val_image_names = os.listdir('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Validation/Val_images')
+
+    print(f"Number of train images: {len(train_image_names)}")
+    print(f"Number of validation images: {len(val_image_names)}")
+    print(train_data.head(10))
+    # Load the rest of the data as needed
+    # Proceed with loading the data as before
+
+
+    # train_path = os.path.join(args.data_dir,'train','radiology')
+    # val_path = os.path.join(args.data_dir,'validation','radiology')
+    # test_path = os.path.join(args.data_dir,'test','radiology')
+
+    # train_image_names = os.listdir(os.path.join(train_path,'images'))
+    # val_image_names = os.listdir(os.path.join(val_path,'images'))
+    # # test_image_names = os.listdir(os.path.join(test_path,'images'))
+
+    train_data = pd.read_csv('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Training/traindf.csv')
+
     train_data = train_data[train_data['img_id'].isin(train_image_names)]
 
-    val_data = pd.read_csv(os.path.join(val_path, 'valdata.csv'))
+    val_data = pd.read_csv('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Validation/valdf.csv')
     val_data = val_data[val_data['img_id'].isin(val_image_names)]
 
     # test_data = pd.read_csv(os.path.join(test_path, 'testdata.csv'))
@@ -87,6 +140,49 @@ def load_mlm_data(args):
     # test_data = test_data.sample(frac = args.test_pct)
         
     return train_data, val_data
+
+
+
+
+# def load_mlm_data(args):
+    # train_path = '/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Training/Train_images/'
+    # val_path = '/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Validation/Val_images/'
+
+    # train_image_names = os.listdir(train_path)
+    # val_image_names = os.listdir(val_path)
+
+    
+    # train_data = pd.read_csv('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Training/traindf.csv')
+    # print(f"Original train data shape: {train_data.shape}")
+
+    # train_data = train_data[train_data['img_id'].isin(train_image_names)]
+    # print(f"Filtered train data shape: {train_data.shape}")
+
+    # val_data = pd.read_csv('/content/drive/MyDrive/ImageCLEF VQA-Med-2019/clef2019/ImageClef-2019-VQA-Med-Validation/valdf.csv')
+    # print(f"Original validation data shape: {val_data.shape}")
+
+    # val_data = val_data[val_data['img_id'].isin(val_image_names)]
+    # print(f"Filtered validation data shape: {val_data.shape}")
+
+    # train_data = train_data.sample(frac=args.train_pct)
+    # val_data = val_data.sample(frac=args.valid_pct)
+
+    # print(f"Final train data shape: {train_data.shape}")
+    # print(f"Final validation data shape: {val_data.shape}")
+    
+    # train_data['img_id'] = train_data['img_id'].str.strip() + '.jpg'  # Add the appropriate extension
+    # val_data['img_id'] = val_data['img_id'].str.strip() + '.jpg'  # Add the appropriate extension
+
+    # train_data = train_data[train_data['img_id'].isin(train_image_names)]
+    # val_data = val_data[val_data['img_id'].isin(val_image_names)]
+
+
+
+    # return train_data, val_data
+
+
+
+
 
 def shuffle_list(some_list):
     length = len(some_list)
